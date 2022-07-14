@@ -1,5 +1,6 @@
 package com.vinyoles.webdev.dynamicSitemap.controllers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +28,32 @@ public class MainController {
 	@GetMapping(value="/sitemap.xml", produces={MediaType.APPLICATION_XML_VALUE})
 	public String sitemap() {
 		
+		//get files and folders names TODO in progress
+		String path = "../";
+		File origin = new File(path);
+		File[] files = origin.listFiles();
+
+		for (File file : files) {
+			String tempPath = path;
+			do {
+				if (file!=null && !file.getName().startsWith(".") && file.isFile()) {
+					System.out.println(tempPath+file.getName());
+					System.out.println("URI"+file.toURI());
+				} else if (file!=null && !file.getName().startsWith(".") && file.isDirectory()) {
+					tempPath += "/"+file.getName();
+					file = file.listFiles()[0];
+				} else {
+					System.err.println("ERROR ON READING FILE PATH");
+					break;
+				}
+			}
+			while(file.isDirectory());
+		}
+		
+		
 		List<Url> urls = new ArrayList<Url>();
 		Sitemap newSitemap = new Sitemap();
-	
+		
 		Url newUrl = new Url();
 		newUrl.setLoc("www.vinyoles.com"); //TODO hardcoded
 		newUrl.setLastmod("2022-07-09"); //TODO hardcoded
